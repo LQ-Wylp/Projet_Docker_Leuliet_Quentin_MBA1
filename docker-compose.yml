@@ -1,0 +1,40 @@
+version: "1"
+services:
+
+  API:
+    build:
+      context: ./API
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_network
+
+  DB:
+    build:
+      context: ./DB
+    networks:
+      - internal_network
+    volumes:
+      - db_data:/path/in/container/to/store/data
+
+  Sender:
+    build:
+      context: ./Sender
+    ports:
+      - "8080:8080"
+    networks:
+      - internal_network
+      
+  Thread:
+    build:
+      context: ./Thread
+    ports:
+      - "8000:8000"
+    networks:
+      - internal_network
+    volumes:
+      - thread_data:/path/in/container/to/store/data
+
+volumes: 
+  logs:
+  

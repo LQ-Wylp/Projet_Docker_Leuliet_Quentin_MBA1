@@ -1,0 +1,78 @@
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affichage des messages</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- <div id="app"></div> -->
+  <div class="container mt-5">
+    <h1 style="text-align: center">Les messages</h1>
+
+    <div style="position: absolute; top:10%; right: 4%">
+      <a class="btn btn-secondary" href="http://localhost:8080" style="margin-bottom: 10px;">Ajouter un message</a>
+    </div>
+
+    <!-- Affichage des classes et des étudiants -->
+    <div class="mt-4">
+      <h3>Les messages</h3>
+      <table class="table table-striped" id="messagesTable"></table>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+  <script>
+    // Fonction pour récupérer la liste des messages depuis l'API
+    function getMessageList() {
+      $.ajax({
+        url: 'http://localhost:3000/',
+        type: 'GET',
+        success: function (response) {
+          // Appel à la fonction pour afficher la liste des messages
+          displayMessageList(response);
+        },
+        error: function (error) {
+          console.error('Erreur lors de la récupération de la liste des messages:', error);
+        }
+      });
+    }
+
+    // Fonction pour afficher la liste des messages en format tableau
+    function displayMessageList(messages) {
+      var messagesTable = document.getElementById('messagesTable');
+      messagesTable.innerHTML = '';
+
+      // Création de l'en-tête du tableau
+      var headerRow = document.createElement('tr');
+      headerRow.innerHTML = '<th scope="col">Nom utilisateur</th><th scope="col">Contenu</th>';
+      messagesTable.appendChild(headerRow);
+
+      // Parcours des messages
+      for (var messageId in messages) {
+        if (messages.hasOwnProperty(messageId)) {
+          var classItem = messages[messageId];
+
+          // Création d'une ligne pour chaque classe
+          var row = document.createElement('tr');
+          row.innerHTML = '<td>' + classItem.user + '</td>' +
+            '<td>' + classItem.description + '</td>';
+
+          messagesTable.appendChild(row);
+        }
+      }
+    }
+
+    getMessageList();
+
+
+  </script>
+</body>
+
+</html>

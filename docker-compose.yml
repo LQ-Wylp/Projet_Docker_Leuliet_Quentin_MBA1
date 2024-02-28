@@ -1,40 +1,74 @@
-version: "1"
-services:
+version: '3.9'
 
-  API:
+services:
+  api:
+    depends_on:
+      - db #je dépends de la base de donnée
     build:
       context: ./API
     ports:
-      - "3000:3000"
-    networks:
-      - internal_network
-
-  DB:
-    build:
-      context: ./DB
+      - "3000:80"
     networks:
       - internal_network
     volumes:
-      - db_data:/path/in/container/to/store/data
+      - ./API/src:/var/www/html
 
-  Sender:
-    build:
-      context: ./Sender
-    ports:
-      - "8080:8080"
-    networks:
-      - internal_network
-      
-  Thread:
+  thread:
+    depends_on:
+      - api
     build:
       context: ./Thread
     ports:
-      - "8000:8000"
+      - "8000:80"
     networks:
       - internal_network
     volumes:
-      - thread_data:/path/in/container/to/store/data
+      - ./Thread:/usr/share/nginx/html
 
-volumes: 
-  logs:
-  
+  sender:
+    depends_on:
+      - api
+    build:
+      context: ./Sender
+    ports:
+      - "8080:80"
+    networks:
+      - internal_network
+    volumes:
+      - ./Sender:/usr/share/nginx/html
+
+  apache:
+    image: php:7.4-apache
+    volumes:
+      - ./apache/apache.conf:/etc/apache2/sites-available/000-default.conf
+    ports:
+      - "3001:80"
+    depends_on:
+      - api
+    networks:
+      - internal_network
+
+  db:
+    # build:
+    #   context: ./DB Prendre en compte le dockerfile 
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: forum_db
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_password
+    networks:
+      - internal_network
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Ce connecter à la db du docker 
+  # docker exec -it idConteneur bash
+  # mysql -u db_user -pdb_password forum_db
+
+networks:
+  internal_network:
+    # nom réseau qui permet de connecter les connecteurs entre eux
+
+volumes:
+  db_data:

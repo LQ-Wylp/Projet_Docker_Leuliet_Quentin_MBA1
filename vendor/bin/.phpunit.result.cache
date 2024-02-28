@@ -1,0 +1,1 @@
+{"version":1,"defects":{"AppTest::testReadCSV":8,"AppTest::testValidateMessageData":5,"IndexTest::testGetAllMessages":7,"IndexTest::testAddMessage":8,"IndexTest::testDeleteMessage":8},"times":{"AppTest::testReadCSV":0.02,"AppTest::testValidateMessageData":0.001,"IndexTest::testGetAllMessages":0.061,"IndexTest::testAddMessage":0.007,"IndexTest::testDeleteMessage":0.005}}

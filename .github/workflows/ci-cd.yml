@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: forum_db
+          MYSQL_USER: db_user
+          MYSQL_PASSWORD: db_password
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        docker-compose run --rm app composer install --no-interaction --no-progress --prefer-dist
+
+    - name: Run PHPUnit tests
+      run: |
+        docker-compose run --rm app vendor/bin/phpunit API/tests/
+
+    - name: Build and deploy Docker containers
+      run: |
+        docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build

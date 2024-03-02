@@ -1,77 +1,75 @@
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Affichage des messages</title>
+  <title>Affichage des statistiques des joueurs</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <!-- <div id="app"></div> -->
   <div class="container mt-5">
-    <h1 style="text-align: center">Les messages</h1>
+    <h1 style="text-align: center">Statistiques des joueurs</h1>
 
-    <div style="position: absolute; top:10%; right: 4%">
-      <a class="btn btn-secondary" href="http://localhost:8080" style="margin-bottom: 10px;">Ajouter un message</a>
-    </div>
-
-    <!-- Affichage des classes et des étudiants -->
-    <div class="mt-4">
-      <h3>Les messages</h3>
-      <table class="table table-striped" id="messagesTable"></table>
-    </div>
+    <div id="joueurStatsList"></div>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
   <script>
-    // Fonction pour récupérer la liste des messages depuis l'API
-    function getMessageList() {
+    // Fonction pour récupérer la liste des statistiques des joueurs depuis l'API
+    function getJoueurStatsList() {
       $.ajax({
-        url: 'http://localhost:3000/',
+        url: 'http://localhost:3000/joueur_stats',
         type: 'GET',
         success: function (response) {
-          // Appel à la fonction pour afficher la liste des messages
-          displayMessageList(response);
+          // Appel à la fonction pour afficher la liste des statistiques des joueurs
+          displayJoueurStatsList(response);
         },
         error: function (error) {
-          console.error('Erreur lors de la récupération de la liste des messages:', error);
+          console.error('Erreur lors de la récupération de la liste des statistiques des joueurs:', error);
         }
       });
     }
 
-    // Fonction pour afficher la liste des messages en format tableau
-    function displayMessageList(messages) {
-      var messagesTable = document.getElementById('messagesTable');
-      messagesTable.innerHTML = '';
+    // Fonction pour afficher la liste des statistiques des joueurs
+    function displayJoueurStatsList(joueurStats) {
+      var joueurStatsList = document.getElementById('joueurStatsList');
+      joueurStatsList.innerHTML = '';
 
-      // Création de l'en-tête du tableau
-      var headerRow = document.createElement('tr');
-      headerRow.innerHTML = '<th scope="col">Nom utilisateur</th><th scope="col">Contenu</th>';
-      messagesTable.appendChild(headerRow);
+      // Parcours des statistiques des joueurs
+      joueurStats.forEach(function (joueur) {
+        // Création de l'élément de la liste
+        var joueurStatsItem = document.createElement('div');
+        joueurStatsItem.classList.add('joueur-stats-item');
 
-      // Parcours des messages
-      for (var messageId in messages) {
-        if (messages.hasOwnProperty(messageId)) {
-          var classItem = messages[messageId];
+        // Création des éléments pour le sender et le thread
+        var nomJoueurElement = document.createElement('h4');
+        nomJoueurElement.textContent = 'Nom joueur: ' + joueur.nom_joueur;
 
-          // Création d'une ligne pour chaque classe
-          var row = document.createElement('tr');
-          row.innerHTML = '<td>' + classItem.user + '</td>' +
-            '<td>' + classItem.description + '</td>';
+        var attaqueElement = document.createElement('p');
+        attaqueElement.textContent = 'Attaque: ' + joueur.attaque;
 
-          messagesTable.appendChild(row);
-        }
-      }
+        var vieElement = document.createElement('p');
+        vieElement.textContent = 'Vie: ' + joueur.vie;
+
+        var niveauElement = document.createElement('p');
+        niveauElement.textContent = 'Niveau: ' + joueur.niveau;
+
+        // Ajout des éléments dans l'élément de la liste
+        joueurStatsItem.appendChild(nomJoueurElement);
+        joueurStatsItem.appendChild(attaqueElement);
+        joueurStatsItem.appendChild(vieElement);
+        joueurStatsItem.appendChild(niveauElement);
+
+        // Ajout de l'élément de la liste à la liste principale
+        joueurStatsList.appendChild(joueurStatsItem);
+      });
     }
 
-    getMessageList();
-
-
+    // Appel à la fonction pour récupérer et afficher les statistiques des joueurs
+    getJoueurStatsList();
   </script>
 </body>
 

@@ -5,36 +5,28 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Connexion à la base de données
 $servername = "db";
-$username = "db_user";
-$password = "db_password";
-$dbname = "forum_db";
+$username = "user";
+$password = "mdp";
+$dbname = "joueur_stats_db";
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
     echo "Erreur de connexion à la base de données : " . $e->getMessage();
     exit;
 }
 
-// Récupération des données à partir de la base de données en fonction de l'URL demandée
 $uri = $_SERVER['REQUEST_URI'];
 
 switch ($uri) {
-    case '/':
+    case '/joueur_stats':
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET':
                 try {
-                    // Exécutez la requête SQL pour récupérer toutes les données
-                    $stmt = $conn->query("SELECT * FROM messages");
-
-                    // Récupérez toutes les lignes de résultat sous forme d'array associatif
+                    $stmt = $conn->query("SELECT * FROM joueur_stats");
                     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                    // Affichez les données récupérées au format JSON
                     echo json_encode($data);
                 } catch(PDOException $e) {
                     echo "Erreur lors de la récupération des données : " . $e->getMessage();
@@ -43,52 +35,27 @@ switch ($uri) {
 
             case 'POST':
                 try {
-                    // Récupérez les données de la requête POST
                     $data = json_decode(file_get_contents('php://input'), true);
-            
-                    // Vérifiez si les données nécessaires sont présentes
-                    if (!isset($data['user']) || !isset($data['description'])) {
+
+                    if (!isset($data['nom_joueur']) || !isset($data['attaque']) || !isset($data['vie']) || !isset($data['niveau'])) {
                         http_response_code(400); // Bad Request
-                        echo json_encode(['error' => 'Données invalides pour l\'ajout du message']);
+                        echo json_encode(['error' => 'Données invalides pour l\'ajout des statistiques du joueur']);
                         break;
                     }
             
-                    // Exécutez la requête SQL pour insérer les données
-                    $stmt = $conn->prepare("INSERT INTO messages (user, description) VALUES (:user, :description)");
-                    $stmt->bindParam(':user', $data['user']);
-                    $stmt->bindParam(':description', $data['description']);
+                    $stmt = $conn->prepare("INSERT INTO joueur_stats (nom_joueur, attaque, vie, niveau) VALUES (:nom_joueur, :attaque, :vie, :niveau)");
+                    $stmt->bindParam(':nom_joueur', $data['nom_joueur']);
+                    $stmt->bindParam(':attaque', $data['attaque']);
+                    $stmt->bindParam(':vie', $data['vie']);
+                    $stmt->bindParam(':niveau', $data['niveau']);
                     $stmt->execute();
             
-                    // Affichez un message de succès
-                    echo json_encode(['message' => 'Message ajoute avec succes']);
+                    echo json_encode(['message' => 'Statistiques du joueur ajoutées avec succès']);
                 } catch(PDOException $e) {
-                    echo "Erreur lors de l'ajout du message : " . $e->getMessage();
+                    echo "Erreur lors de l'ajout des statistiques du joueur : " . $e->getMessage();
                 }
                 break;
             
-            case 'DELETE':
-                try {
-                    // Récupérez les données de la requête DELETE
-                    $data = json_decode(file_get_contents('php://input'), true);
-            
-                    // Vérifiez si les données nécessaires sont présentes
-                    if (!isset($data['id'])) {
-                        http_response_code(400); // Bad Request
-                        echo json_encode(['error' => 'Données invalides pour la suppression du message']);
-                        break;
-                    }
-            
-                    // Exécutez la requête SQL pour supprimer les données
-                    $stmt = $conn->prepare("DELETE FROM messages WHERE id = :id");
-                    $stmt->bindParam(':id', $data['id']);
-                    $stmt->execute();
-            
-                    // Affichez un message de succès
-                    echo json_encode(['message' => 'Message supprime avec succes']);
-                } catch(PDOException $e) {
-                    echo "Erreur lors de la suppression du message : " . $e->getMessage();
-                }
-                break;
             default:
                 http_response_code(405); // Method Not Allowed
                 echo json_encode(['error' => 'Méthode non autorisée']);

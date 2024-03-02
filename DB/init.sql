@@ -1,15 +1,15 @@
--- Exemple de script SQL d'initialisation
-CREATE DATABASE IF NOT EXISTS forum_db;
-USE forum_db;
+CREATE DATABASE IF NOT EXISTS joueur_stats_db;
+USE joueur_stats_db;
 
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE IF NOT EXISTS joueur_stats (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user VARCHAR(255),
-    description TEXT
+    nom_joueur VARCHAR(255),
+    attaque INT,
+    vie INT,
+    niveau INT
 );
 
--- Insérer les données du fichier CSV dans la table
-INSERT INTO messages (user, description) VALUES
-('David', 'Coucou'),
-('Jean', 'Salut'),
-('Marc', 'Hello');
+INSERT INTO joueur_stats (nom_joueur, attaque, vie, niveau) VALUES
+('Joueur1', 50, 100, 1),
+('Joueur2', 70, 90, 2),
+('Joueur3', 90, 110, 3);

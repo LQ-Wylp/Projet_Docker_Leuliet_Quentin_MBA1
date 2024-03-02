@@ -1,18 +1,13 @@
-# Utilisez l'image MySQL officielle de Docker Hub
 FROM mysql:latest
 
-# Variables d'environnement pour configurer MySQL
 ENV MYSQL_HOST=localhost
 ENV MYSQL_ROOT_PASSWORD=root_password
-ENV MYSQL_DATABASE=forum_db
-ENV MYSQL_USER=db_user
-ENV MYSQL_PASSWORD=db_password
+ENV MYSQL_DATABASE=joueur_stats_db
+ENV MYSQL_USER=user
+ENV MYSQL_PASSWORD=mdp
 
-# Copiez le fichier SQL avec les données dans le conteneur
 COPY init.sql /docker-entrypoint-initdb.d/
 
-# Exposez le port MySQL (par défaut, c'est 3306)
 EXPOSE 3306
 
-# CMD pour démarrer MySQL lors du démarrage du conteneur
 CMD ["mysql"]

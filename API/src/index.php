@@ -5,6 +5,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
+// Connexion à la base de données
 $servername = "db";
 $username = "user";
 $password = "mdp";
@@ -21,7 +22,7 @@ try {
 $uri = $_SERVER['REQUEST_URI'];
 
 switch ($uri) {
-    case '/joueur_stats':
+    case '/joueurStats':
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET':
                 try {

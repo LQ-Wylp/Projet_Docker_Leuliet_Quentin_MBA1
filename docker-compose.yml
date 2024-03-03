@@ -3,7 +3,7 @@ version: '3.9'
 services:
   api:
     depends_on:
-      - db #je dépends de la base de donnée
+      - db
     build:
       context: ./API
     ports:
@@ -49,26 +49,19 @@ services:
       - internal_network
 
   db:
-    # build:
-    #   context: ./DB Prendre en compte le dockerfile 
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: forum_db
-      MYSQL_USER: db_user
-      MYSQL_PASSWORD: db_password
+      MYSQL_DATABASE: joueur_stats_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: mdp
     networks:
       - internal_network
     volumes:
       - db_data:/var/lib/mysql
 
-  # Ce connecter à la db du docker 
-  # docker exec -it idConteneur bash
-  # mysql -u db_user -pdb_password forum_db
-
 networks:
   internal_network:
-    # nom réseau qui permet de connecter les connecteurs entre eux
 
 volumes:
   db_data:

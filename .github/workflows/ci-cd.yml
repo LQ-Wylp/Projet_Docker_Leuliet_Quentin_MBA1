@@ -14,9 +14,9 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_DATABASE: forum_db
-          MYSQL_USER: db_user
-          MYSQL_PASSWORD: db_password
+          MYSQL_DATABASE: joueur_stats_db
+          MYSQL_USER: user
+          MYSQL_PASSWORD: mdp
 
     steps:
     - name: Checkout repository

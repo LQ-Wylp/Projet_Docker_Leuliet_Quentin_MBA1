@@ -1,11 +1,3 @@
-# Partir de ngix 
-# Utiliser une image NGINX comme base
 FROM nginx
-
-# Copier les configurations NGINX dans le conteneur
 COPY . .
-
-# Exposez le port sur lequel le service écoute
-EXPOSE 80
-
-# Lancer npm run build avant docker compose build !!!!!
+EXPOSE 8000

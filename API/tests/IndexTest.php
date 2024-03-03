@@ -4,73 +4,65 @@ use PHPUnit\Framework\TestCase;
 
 class IndexTest extends TestCase
 {
-    public function testGetAllMessages()
+    public function testGetAllJoueurStats()
     {
-        // Simuler une requête GET
-        $_SERVER['REQUEST_URI'] = 'http://localhost:3000/';
+        $_SERVER['REQUEST_URI'] = 'http://localhost:3000/joueur_stats';
         $_SERVER['REQUEST_METHOD'] = 'GET';
 
         ob_start();
-        include '../src/index.php'; // Inclure le fichier index.php pour le tester
+        include '../src/index.php';
         $output = ob_get_clean();
 
-        $this->assertJson($output); // Vérifier si la réponse est en format JSON
-        $data = json_decode($output, true); // Convertir la réponse JSON en tableau associatif
+        $this->assertJson($output);
+        $data = json_decode($output, true);
 
-        // Vérifier si la réponse contient les clés attendues
-        $this->assertArrayHasKey('message', $data);
-        $this->assertArrayHasKey('user', $data);
-        $this->assertArrayHasKey('description', $data);
+        $this->assertArrayHasKey('nom_joueur', $data[0]);
+        $this->assertArrayHasKey('attaque', $data[0]);
+        $this->assertArrayHasKey('vie', $data[0]);
+        $this->assertArrayHasKey('niveau', $data[0]);
     }
 
-    public function testAddMessage()
+    public function testAddJoueurStats()
     {
-        // Données à envoyer dans la requête POST
-        $postData = array(
-            'user' => 'John',
-            'description' => 'New message'
-        );
+        $postData = json_encode(array(
+            'nom_joueur' => 'John',
+            'attaque' => 100,
+            'vie' => 200,
+            'niveau' => 10
+        ));
 
-        // Simuler une requête POST
-        $_SERVER['REQUEST_URI'] = '/';
+        $_SERVER['REQUEST_URI'] = '/joueur_stats';
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST = $postData;
+        $_POST = array();
+        parse_str($postData, $_POST);
 
-        // Capturer la sortie de votre API
         ob_start();
-        include '../src/index.php'; // Assurez-vous que le chemin est correct
+        include '../src/index.php';
         $output = ob_get_clean();
 
-        // Vérifier la réponse de l'API
         $responseData = json_decode($output, true);
 
-        // Assurez-vous que la réponse contient le message ajouté
         $this->assertArrayHasKey('message', $responseData);
-        $this->assertEquals('Message ajouté avec succès', $responseData['message']);
+        $this->assertEquals('Statistiques du joueur ajoutées avec succès', $responseData['message']);
     }
 
-    public function testDeleteMessage()
+    public function testDeleteJoueurStats()
     {
-        // Données à envoyer dans la requête DELETE
         $deleteData = array(
-            'id' => 1 // ID du message à supprimer
+            'id' => 1
         );
 
-        // Simuler une requête DELETE
-        $_SERVER['REQUEST_URI'] = '/';
+        $_SERVER['REQUEST_URI'] = '/joueur_stats';
         $_SERVER['REQUEST_METHOD'] = 'DELETE';
-        $_DELETE = $deleteData; // Notez que $_DELETE n'est pas une variable superglobale standard, vous devrez peut-être la configurer dans votre environnement de test
+        $_DELETE = $deleteData; 
 
-        // Capturer la sortie de votre API
         ob_start();
-        include '../src/index.php'; // Assurez-vous que le chemin est correct
+        include '../src/index.php';
         $output = ob_get_clean();
 
-        // Vérifier la réponse de l'API
         $responseData = json_decode($output, true);
 
-        // Assurez-vous que la réponse contient le message de succès attendu
         $this->assertArrayHasKey('message', $responseData);
-        $this->assertEquals('Message supprimé avec succès', $responseData['message']);
+        $this->assertEquals('Statistiques du joueur supprimées avec succès', $responseData['message']);
     }
 }
